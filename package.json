@@ -1,5 +1,5 @@
 {
-  "name": "Personal Resume",
+  "name": "personal-resume",
   "private": true,
   "version": "0.0.0",
   "scripts": {
@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "path": "^0.12.7",
     "vue": "^3.2.25"
   },
   "devDependencies": {
