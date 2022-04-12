@@ -27,7 +27,7 @@ export default defineComponent({
         <div class="title">
           <span>项目经历</span>
         </div>
-        <div v-for="(item, index) in pr.project" :key="index">
+        <div class="mb30" v-for="(item, index) in pr.project" :key="index">
           <div class="flex-wrapper header">
             <div class="name">{{item.name}}</div>
             <div class="link"><a :href="item.link" target="_blank">{{item.link}}</a></div>
@@ -102,7 +102,6 @@ main{
   flex-direction: row-reverse;
   .left{
     width: 300px;
-    height: 100%;
     padding-top: 40px;
     padding-left: 20px;
     padding-right: 20px;
