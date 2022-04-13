@@ -1,4 +1,4 @@
-import avatar from '@/assets/avatar.png'
+import avatar from '@/assets/avatar.jpg'
 export const pr = {
     name: '黄军生',
     avatar: avatar,

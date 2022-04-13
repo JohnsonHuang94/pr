@@ -1,5 +1,7 @@
 <script>
 import { pr } from '@/config/config'
+import { jsPDF } from 'jspdf' 
+import html2canvas from 'html2canvas'
 import { defineComponent } from '@vue/runtime-core'
 import skill from '@/components/skill.vue'
 export default defineComponent({
@@ -16,13 +18,65 @@ export default defineComponent({
       pr,
       prefixProtocol
     }
+  },
+  methods: {
+    // 将html保存为pdf
+    saveAsPDF() {
+      const dom = document.getElementById('main')
+      html2canvas(dom, {
+        allowTaint: true,
+        scrollX: 0,
+        scrollY: 0,
+        useCORS: true,
+        width: 1000,
+        height: dom.offsetHeight,
+      }).then(canvas => {
+        let pageData = new Image();
+        pageData.src = canvas.toDataURL('image/png');
+        let contentWidth = dom.clientWidth; // 获得该容器的宽
+        let contentHeight = dom.clientHeight;
+        //一页 pdf 显示 html 页面生成的 canvas高度
+        let pageHeight = (contentWidth / 552.28) * 841.89;
+        //未生成 pdf 的 html页面高度
+        let leftHeight = contentHeight;
+        //页面偏移
+        let position = 0;
+        //a4纸的尺寸[595.28,841.89]，html 页面生成的 canvas 在pdf中图片的宽高
+        let imgWidth = 555.28;
+        let imgHeight = (imgWidth / contentWidth) * contentHeight;
+
+        const pdf = new jsPDF('', 'pt', 'a4') // 下载尺寸 a4 纸 比例
+        //有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
+        //当内容未超过pdf一页显示的范围，无需分页
+        if (leftHeight < pageHeight) {
+          pdf.addImage(pageData, 'JPEG', 20, 0, imgWidth, imgHeight)
+        } else {
+          while (leftHeight > 0) {
+            pdf.addImage(pageData, 'JPEG', 20, position, imgWidth, imgHeight)
+            leftHeight -= pageHeight
+            position -= 841.89
+            //避免添加空白页
+            if (leftHeight > 0) {
+              pdf.addPage()
+            }
+          }
+        }
+        pdf.save(`${pr.name}的个人简历`)
+      })
+    }
+  },
+  mounted() {
   }
 })
 </script>
 
 <template>
-  <main>
+  <div class="export-con" id="exportCon">
+    <button @click="saveAsPDF">导出PDF</button>
+  </div>
+  <main id="main">
     <div class="right">
+      
       <div class="wrapper">
         <div class="title">
           <span>项目经历</span>
@@ -96,23 +150,40 @@ export default defineComponent({
 </template>
 
 <style scoped lang="scss">
+.export-con{
+  text-align: right;
+  position: absolute;
+  right: 20px;
+  top: 8px;
+}
 main{
   min-width: 800px;
   display: flex;
   flex-direction: row-reverse;
   .left{
-    width: 300px;
+    width: 260px;
     padding-top: 40px;
-    padding-left: 20px;
-    padding-right: 20px;
-    // background: -webkit-linear-gradient(45deg, #3ac7ff, #28e7ff);
+    padding-left: 10px;
+    padding-right: 10px;
     background-color: #f5f5f5;
-    color: #1E2430;
     text-align: center;
     font-size: 24px;
     .name{
       font-weight: bold;
       margin-bottom: 20px;
+    }
+    .avatar{
+      width: 150px;
+      height: 150px;
+      overflow: hidden;
+      border-radius: 150px;
+      text-align: center;
+      margin: 0 auto 15px;
+      img{
+        width: 100%;
+        display:block;
+        margin: 0 auto;
+      }
     }
     .posts{
       margin-bottom: 20px;
@@ -129,12 +200,14 @@ main{
       padding: 10px 0;
       .link{
         margin-left: 8px;
+        font-size: 14px;
       }
     }
   }
   .right{
     flex: 1;
-    padding: 30px;
+    padding: 30px 20px;
+    
     .wrapper{
       margin-bottom: 40px;
       .header{

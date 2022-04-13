@@ -4,8 +4,16 @@
     box-sizing: border-box;
 }
 html, body, #app, main{
-    width: 100%;
-    height: 100%;
+    width: 1000px; // 1000px适配A4纸张
+    color: #1E2430;
+    margin: 0 auto;
+}
+a{
+    text-decoration: none;
+}
+a:link, a:visited, a:hover, a:active{
+    text-decoration: none;
+    color: #1E2430;
 }
 .flex-wrapper{
     display: flex;
